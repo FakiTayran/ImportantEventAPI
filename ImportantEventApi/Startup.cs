@@ -1,3 +1,9 @@
+using ImportantEventApi.Managers;
+using ImportantEventApi.Services;
+using ImportantEventBusiness.Abstract;
+using ImportantEventBusiness.Concrete;
+using ImportantEventDataAccess.Abstract;
+using ImportantEventDataAccess.Concrete;
 using ImportantEventDataAccess.EfCore;
 using ImportantEventEntities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -75,6 +81,10 @@ namespace ImportantEventApi
                     builder.AllowAnyMethod(); // all methods (post, put, ..) allowed
                     builder.AllowAnyHeader(); // all headers allowed
                 }));
+
+            services.AddScoped(typeof(IAsyncRepository<>), typeof(EfRepository<>));
+            services.AddScoped<IEventService, EventManager>();
+            services.AddScoped<IMyFavoriteMemoryService, MyFavoriteMemoryManager>();
             services.AddTransient<ClaimsPrincipal>(
                 s => s.GetService<IHttpContextAccessor>().HttpContext.User);
             services.AddControllers();
@@ -105,7 +115,6 @@ namespace ImportantEventApi
                     }
                 });
             });
-
 
         }
 

@@ -14,5 +14,9 @@ namespace ImportantEventEntities
 
         public string Description { get; set; }
 
+        public string OwnerId { get; set; }
+
+        public string Language { get; set; }
+
     }
 }
