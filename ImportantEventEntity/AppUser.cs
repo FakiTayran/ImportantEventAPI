@@ -9,5 +9,6 @@ namespace ImportantEventEntities
     {
         public ICollection<Event> Events { get; set; }
 
+        public string Token { get; set; }
     }
 }

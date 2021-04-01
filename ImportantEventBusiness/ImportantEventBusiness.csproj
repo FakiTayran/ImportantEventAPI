@@ -9,9 +9,4 @@
     <ProjectReference Include="..\ImportantEventEntity\ImportantEventEntities.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Abstract\" />
-    <Folder Include="Concrete\" />
-  </ItemGroup>
-
 </Project>

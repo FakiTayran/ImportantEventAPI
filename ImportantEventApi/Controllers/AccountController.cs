@@ -1,6 +1,5 @@
 ﻿using ImportantEventDataAccess.EfCore;
 using ImportantEventEntities;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -25,7 +24,6 @@ namespace ImportantEventApi.Controllers
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly IOptions<AppSettings> _appSettings;
-        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ImportantEventDbContext _dbContext;
 
         public AccountController(UserManager<AppUser> userManager, IOptions<AppSettings> appSettings,ImportantEventDbContext dbContext)
@@ -67,6 +65,9 @@ namespace ImportantEventApi.Controllers
                     );
 
                 var stringToken = new JwtSecurityTokenHandler().WriteToken(token);
+                user.Token = stringToken;
+                await _dbContext.SaveChangesAsync();
+
                 return Ok(new 
                 {
                     token = stringToken ,
@@ -78,14 +79,19 @@ namespace ImportantEventApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetUserInformation()
+        public async Task<IActionResult> GetLoginInformation(string token)
         {
-            var user = 
-            if (user != null)
+            if (token == null)
             {
-                return Ok(user.Email);
+                return BadRequest();
+            }
+            AppUser appUser = await _dbContext.Users.FirstOrDefaultAsync(x => x.Token == token);
+            if (appUser !=null)
+            {
+                return Ok(appUser.Email);
             }
             return BadRequest();
+
         }
 
         [HttpPost("Register")]
@@ -110,7 +116,7 @@ namespace ImportantEventApi.Controllers
             }
 
 
-            return BadRequest(result);
+            return BadRequest("Something Wrong");
         }
     }
 }
